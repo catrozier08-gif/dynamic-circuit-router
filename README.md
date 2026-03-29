@@ -92,3 +92,17 @@ dependencies = generate_clustered_dynamic_dependencies(
 best_mapping, best_cost = router.optimize_placement(dependencies)
 
 print("Optimized modeled delay:", best_cost)
+
+Example script
+You can also run the included example:
+
+python example_usage.py
+
+Suggested use
+This repository is most useful as a prototype environment for exploring:
+
+dynamic dependency-aware placement
+feed-forward delay minimization
+hybrid quantum/dynamic placement objectives
+synthetic benchmark construction for dynamic-circuit compilation research
+
