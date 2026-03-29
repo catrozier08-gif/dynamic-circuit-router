@@ -46,9 +46,11 @@ This allows experiments on workloads where quantum interaction locality and dyna
 ## Benchmark highlights
 
 ### Dynamic-only placement
+
 On synthetic 10x10 planar benchmarks with weighted dynamic dependencies, the delay-aware placement optimizer reduced modeled feed-forward delay by roughly **48–50%** relative to naive placement across clustered, hub-spoke, and random dependency structures.
 
 ### Hybrid placement
+
 Hybrid placement was most beneficial when quantum locality and dynamic feed-forward locality were in tension:
 
 - **clustered workloads:** hybrid gains were small at low dynamic weighting, but grew as dynamic cost became more important
@@ -60,6 +62,7 @@ Hybrid placement was most beneficial when quantum locality and dynamic feed-forw
 This is a **prototype placement and benchmarking tool**, not a hardware-exact control-stack or transpiler implementation.
 
 It does **not** currently:
+
 - extract dependencies from full real-world dynamic-circuit control flow
 - synthesize hardware-native feed-forward operations
 - perform timing-accurate scheduling
@@ -85,51 +88,7 @@ dependencies = generate_clustered_dynamic_dependencies(
     num_measurements=30,
     seed=42,
 )
+
 best_mapping, best_cost = router.optimize_placement(dependencies)
 
 print("Optimized modeled delay:", best_cost)
-
-Example script
-You can also run the included example: python example_usage.py
-Suggested use
-This repository is most useful as a prototype environment for exploring:
-
-dynamic dependency-aware placement
-feed-forward delay minimization
-hybrid quantum/dynamic placement objectives
-synthetic benchmark construction for dynamic-circuit compilation research
-
----
-
-# 2. `example_usage.py`
-
-```python
-from dynamic_placement_optimizer import (
-    PlanarGridTopology,
-    DynamicCircuitRouter,
-    generate_clustered_dynamic_dependencies,
-)
-
-topology = PlanarGridTopology(width=10, height=10)
-router = DynamicCircuitRouter(topology)
-
-dependencies = generate_clustered_dynamic_dependencies(
-    num_qubits=topology.num_qubits,
-    num_clusters=4,
-    num_measurements=30,
-    seed=42,
-)
-
-naive_mapping = {q: q for q in range(topology.num_qubits)}
-naive_delay = router.calculate_total_delay(dependencies, naive_mapping)
-
-best_mapping, best_delay = router.optimize_placement(dependencies)
-
-reduction_pct = ((naive_delay - best_delay) / naive_delay) * 100 if naive_delay > 0 else 0.0
-
-print("============================================================")
-print("Dynamic Circuit Delay-Aware Placement Optimizer")
-print("============================================================")
-print(f"Naive modeled delay:      {naive_delay:.1f} ns")
-print(f"Optimized modeled delay:  {best_delay:.1f} ns")
-print(f"Delay reduction:          {reduction_pct:.1f}%")
